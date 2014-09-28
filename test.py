@@ -69,6 +69,56 @@ class TestRegisterLoads(unittest.TestCase):
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["B"], 100)
         pass
+    
+    def test_load_A_to_C(self):
+        program = "\x79"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["C"], 100)
+        pass
+    
+    def test_load_A_to_D(self):
+        program = "\x7A"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["D"], 100)
+        pass
+    
+    def test_load_A_to_E(self):
+        program = "\x7B"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["E"], 100)
+        pass
+    
+    def test_load_A_to_H(self):
+        program = "\x7C"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["H"], 100)
+        pass
+    
+    def test_load_A_to_L(self):
+        program = "\x7D"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["L"], 100)
+        pass
 
 if __name__ == "__main__":
     unittest.main()

@@ -57,6 +57,31 @@ def LD_A_into_B(processor,params):
     processor.registers["B"] = processor.registers["A"]
     pass
 
+@opcode(op=0x79,size=1,clocks=4)
+def LD_A_into_C(processor,params):
+    processor.registers["C"] = processor.registers["A"]
+    pass
+
+@opcode(op=0x7A,size=1,clocks=4)
+def LD_A_into_D(processor,params):
+    processor.registers["D"] = processor.registers["A"]
+    pass
+
+@opcode(op=0x7B,size=1,clocks=4)
+def LD_A_into_E(processor,params):
+    processor.registers["E"] = processor.registers["A"]
+    pass
+
+@opcode(op=0x7C,size=1,clocks=4)
+def LD_A_into_H(processor,params):
+    processor.registers["H"] = processor.registers["A"]
+    pass
+
+@opcode(op=0x7D,size=1,clocks=4)
+def LD_A_into_L(processor,params):
+    processor.registers["L"] = processor.registers["A"]
+    pass
+
 def run_instruction(program, processor):
     opcode = program[processor.program_counter]
     opcode_info = OPERATIONS[ord(opcode)]
