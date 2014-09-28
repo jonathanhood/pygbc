@@ -30,17 +30,20 @@ def load_8bit_immediate(op, dest):
     def handler(processor, params):
         processor.registers[dest] = params[0]
 
+
+def copy_register(op, src, dest):
+    @opcode(op=op,size=1,clocks=4)
+    def handler(processor, params):
+        processor.registers[dest] = processor.registers[src]
+
+# Opcode Table
+
 load_8bit_immediate(op=0x06,dest="B")
 load_8bit_immediate(op=0x0E,dest="C")
 load_8bit_immediate(op=0x16,dest="D")
 load_8bit_immediate(op=0x1E,dest="E")
 load_8bit_immediate(op=0x26,dest="H")
 load_8bit_immediate(op=0x2E,dest="L")
-
-def copy_register(op, src, dest):
-    @opcode(op=op,size=1,clocks=4)
-    def handler(processor, params):
-        processor.registers[dest] = processor.registers[src]
 
 copy_register(op=0x40,src="B",dest="B")
 copy_register(op=0x41,src="C",dest="B")
