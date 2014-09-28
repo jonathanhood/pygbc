@@ -25,102 +25,40 @@ class Processor:
             "L" : 0
         }
 
-@opcode(op=0x06,size=2,clocks=8)
-def LD_b_8bit(processor,params):
-    processor.registers["B"] = params[0]
+def load_8bit_immediate(op, dest):
+    @opcode(op=op,size=2,clocks=8)
+    def handler(processor, params):
+        processor.registers[dest] = params[0]
 
-@opcode(op=0x0E,size=2,clocks=8)
-def LD_c_8bit(processor,params):
-    processor.registers["C"] = params[0]
+load_8bit_immediate(op=0x06,dest="B")
+load_8bit_immediate(op=0x0E,dest="C")
+load_8bit_immediate(op=0x16,dest="D")
+load_8bit_immediate(op=0x1E,dest="E")
+load_8bit_immediate(op=0x26,dest="H")
+load_8bit_immediate(op=0x2E,dest="L")
 
-@opcode(op=0x16,size=2,clocks=8)
-def LD_d_8bit(processor,params):
-    processor.registers["D"] = params[0]
+def load_register(op, src, dest):
+    @opcode(op=op,size=1,clocks=4)
+    def handler(processor, params):
+        processor.registers[dest] = processor.registers[src]
 
-@opcode(op=0x1E,size=2,clocks=8)
-def LD_e_8bit(processor,params):
-    processor.registers["E"] = params[0]
+load_register(op=0x40,src="B",dest="B")
+load_register(op=0x41,src="C",dest="B")
+load_register(op=0x42,src="D",dest="B")
+load_register(op=0x43,src="E",dest="B")
+load_register(op=0x44,src="H",dest="B")
+load_register(op=0x45,src="L",dest="B")
+load_register(op=0x46,src="L",dest="B") # Load HL into B
 
-@opcode(op=0x26,size=2,clocks=8)
-def LD_h_8bit(processor,params):
-    processor.registers["H"] = params[0]
+load_register(op=0x78,src="B",dest="A")
+load_register(op=0x79,src="C",dest="A")
+load_register(op=0x7A,src="D",dest="A")
+load_register(op=0x7B,src="E",dest="A")
+load_register(op=0x7C,src="H",dest="A")
+load_register(op=0x7D,src="L",dest="A")
+load_register(op=0x7E,src="L",dest="A") # Load HL into A
+load_register(op=0x7F,src="A",dest="A")
 
-@opcode(op=0x2E,size=2,clocks=8)
-def LD_l_8bit(processor,params):
-    processor.registers["L"] = params[0]
-
-@opcode(op=0x40,size=1,clocks=4)
-def LD_B_into_B(processor,params):
-    pass
-
-@opcode(op=0x41,size=1,clocks=4)
-def LD_C_into_B(processor,params):
-    processor.registers["B"] = processor.registers["C"]
-    pass
-
-@opcode(op=0x42,size=1,clocks=4)
-def LD_D_into_B(processor,params):
-    processor.registers["B"] = processor.registers["D"]
-    pass
-
-@opcode(op=0x43,size=1,clocks=4)
-def LD_E_into_B(processor,params):
-    processor.registers["B"] = processor.registers["E"]
-    pass
-
-@opcode(op=0x44,size=1,clocks=4)
-def LD_H_into_B(processor,params):
-    processor.registers["B"] = processor.registers["H"]
-    pass
-
-@opcode(op=0x45,size=1,clocks=4)
-def LD_L_into_B(processor,params):
-    processor.registers["B"] = processor.registers["L"]
-    pass
-
-@opcode(op=0x45,size=1,clocks=8)
-def LD_HL_into_B(processor,params):
-    processor.registers["B"] = processor.registers["L"]
-    pass
-
-@opcode(op=0x7F,size=1,clocks=4)
-def LD_A_into_A(processor,params):
-    pass
-
-@opcode(op=0x78,size=1,clocks=4)
-def LD_B_into_A(processor,params):
-    processor.registers["A"] = processor.registers["B"]
-    pass
-
-@opcode(op=0x79,size=1,clocks=4)
-def LD_C_into_A(processor,params):
-    processor.registers["A"] = processor.registers["C"]
-    pass
-
-@opcode(op=0x7A,size=1,clocks=4)
-def LD_D_into_A(processor,params):
-    processor.registers["A"] = processor.registers["D"]
-    pass
-
-@opcode(op=0x7B,size=1,clocks=4)
-def LD_E_into_A(processor,params):
-    processor.registers["A"] = processor.registers["E"]
-    pass
-
-@opcode(op=0x7C,size=1,clocks=4)
-def LD_H_into_A(processor,params):
-    processor.registers["A"] = processor.registers["H"]
-    pass
-
-@opcode(op=0x7D,size=1,clocks=4)
-def LD_L_into_A(processor,params):
-    processor.registers["A"] = processor.registers["L"]
-    pass
-
-@opcode(op=0x7E,size=1,clocks=4)
-def LD_HL_into_A(processor,params):
-    processor.registers["A"] = processor.registers["L"]
-    pass
 
 def run_instruction(program, processor):
     opcode = program[processor.program_counter]
