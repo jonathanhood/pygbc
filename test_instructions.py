@@ -43,3 +43,22 @@ def test_register_copies(opcode,src,dest):
     assert processor.registers[src] == 100
     assert processor.registers[dest] == 100
 
+
+@pytest.mark.parametrize("opcode,dest", [
+    ("\x46", "B"),
+    ("\x4E", "C"),
+    ("\x56", "D"),
+    ("\x5E", "E"),
+    ("\x66", "H"),
+    ("\x6E", "L"),
+    ("\x7E", "A")
+])
+def test_load_from_memory(opcode,dest):
+    processor = gbc.Processor()
+    processor.memory[0x0110] = 0x5A
+    processor.registers["H"] = 0x01
+    processor.registers["L"] = 0x10
+    gbc.run_instruction(opcode, processor)
+    assert processor.program_counter == 1
+    assert processor.registers[dest] == 0x5A
+
