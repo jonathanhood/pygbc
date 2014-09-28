@@ -60,64 +60,76 @@ class TestRegisterLoads(unittest.TestCase):
         self.assertEquals(processor.registers["A"], 100)
         pass
     
-    def test_load_A_to_B(self):
+    def test_load_B_to_A(self):
         program = "\x78"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["B"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["B"], 100)
         pass
     
-    def test_load_A_to_C(self):
+    def test_load_C_to_A(self):
         program = "\x79"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["C"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["C"], 100)
         pass
     
-    def test_load_A_to_D(self):
+    def test_load_D_to_A(self):
         program = "\x7A"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["D"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["D"], 100)
         pass
     
-    def test_load_A_to_E(self):
+    def test_load_E_to_A(self):
         program = "\x7B"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["E"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["E"], 100)
         pass
     
-    def test_load_A_to_H(self):
+    def test_load_H_to_A(self):
         program = "\x7C"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["H"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["H"], 100)
         pass
     
-    def test_load_A_to_L(self):
+    def test_load_L_to_A(self):
         program = "\x7D"
         processor = gbc.Processor()
-        processor.registers["A"] = 100
+        processor.registers["L"] = 100
         gbc.run_instruction(program, processor)
         self.assertEquals(processor.program_counter, 1)
         self.assertEquals(processor.registers["A"], 100)
         self.assertEquals(processor.registers["L"], 100)
+        pass
+    
+    def test_load_HL_to_A(self):
+        program = "\x7E"
+        processor = gbc.Processor()
+        processor.registers["H"] = 0xDE
+        processor.registers["L"] = 0xAD
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["H"], 0xDE)
+        self.assertEquals(processor.registers["L"], 0xAD)
+        self.assertEquals(processor.registers["A"], 0xAD)
         pass
 
 if __name__ == "__main__":

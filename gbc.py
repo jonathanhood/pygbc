@@ -16,6 +16,7 @@ class Processor:
     def __init__(self):
         self.program_counter = 0
         self.registers = {
+            "A" : 0,
             "B" : 0,
             "C" : 0,
             "D" : 0,
@@ -53,33 +54,38 @@ def LD_A_into_A(processor,params):
     pass
 
 @opcode(op=0x78,size=1,clocks=4)
-def LD_A_into_B(processor,params):
-    processor.registers["B"] = processor.registers["A"]
+def LD_B_into_A(processor,params):
+    processor.registers["A"] = processor.registers["B"]
     pass
 
 @opcode(op=0x79,size=1,clocks=4)
-def LD_A_into_C(processor,params):
-    processor.registers["C"] = processor.registers["A"]
+def LD_C_into_A(processor,params):
+    processor.registers["A"] = processor.registers["C"]
     pass
 
 @opcode(op=0x7A,size=1,clocks=4)
-def LD_A_into_D(processor,params):
-    processor.registers["D"] = processor.registers["A"]
+def LD_D_into_A(processor,params):
+    processor.registers["A"] = processor.registers["D"]
     pass
 
 @opcode(op=0x7B,size=1,clocks=4)
-def LD_A_into_E(processor,params):
-    processor.registers["E"] = processor.registers["A"]
+def LD_E_into_A(processor,params):
+    processor.registers["A"] = processor.registers["E"]
     pass
 
 @opcode(op=0x7C,size=1,clocks=4)
-def LD_A_into_H(processor,params):
-    processor.registers["H"] = processor.registers["A"]
+def LD_H_into_A(processor,params):
+    processor.registers["A"] = processor.registers["H"]
     pass
 
 @opcode(op=0x7D,size=1,clocks=4)
-def LD_A_into_L(processor,params):
-    processor.registers["L"] = processor.registers["A"]
+def LD_L_into_A(processor,params):
+    processor.registers["A"] = processor.registers["L"]
+    pass
+
+@opcode(op=0x7E,size=1,clocks=4)
+def LD_HL_into_A(processor,params):
+    processor.registers["A"] = processor.registers["L"]
     pass
 
 def run_instruction(program, processor):
