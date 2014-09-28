@@ -29,7 +29,11 @@ def register_copy_params(dest, base_opcode):
     [("\x7F","A","A")],
     register_copy_params("A", 0x78),
     register_copy_params("B", 0x40),
-    register_copy_params("C", 0x48)
+    register_copy_params("C", 0x48),
+    register_copy_params("D", 0x50),
+    register_copy_params("E", 0x58),
+    register_copy_params("H", 0x60),
+    register_copy_params("L", 0x68)
 ]))
 def test_register_copies(opcode,src,dest):
     processor = gbc.Processor()
