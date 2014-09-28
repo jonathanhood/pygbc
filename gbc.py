@@ -49,6 +49,40 @@ def LD_h_8bit(processor,params):
 def LD_l_8bit(processor,params):
     processor.registers["L"] = params[0]
 
+@opcode(op=0x40,size=1,clocks=4)
+def LD_B_into_B(processor,params):
+    pass
+
+@opcode(op=0x41,size=1,clocks=4)
+def LD_C_into_B(processor,params):
+    processor.registers["B"] = processor.registers["C"]
+    pass
+
+@opcode(op=0x42,size=1,clocks=4)
+def LD_D_into_B(processor,params):
+    processor.registers["B"] = processor.registers["D"]
+    pass
+
+@opcode(op=0x43,size=1,clocks=4)
+def LD_E_into_B(processor,params):
+    processor.registers["B"] = processor.registers["E"]
+    pass
+
+@opcode(op=0x44,size=1,clocks=4)
+def LD_H_into_B(processor,params):
+    processor.registers["B"] = processor.registers["H"]
+    pass
+
+@opcode(op=0x45,size=1,clocks=4)
+def LD_L_into_B(processor,params):
+    processor.registers["B"] = processor.registers["L"]
+    pass
+
+@opcode(op=0x45,size=1,clocks=8)
+def LD_HL_into_B(processor,params):
+    processor.registers["B"] = processor.registers["L"]
+    pass
+
 @opcode(op=0x7F,size=1,clocks=4)
 def LD_A_into_A(processor,params):
     pass
