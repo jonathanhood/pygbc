@@ -50,5 +50,25 @@ class Test8BitLoads(unittest.TestCase):
         self.assertEquals(processor.registers["L"], 0x21)
         pass
 
+class TestRegisterLoads(unittest.TestCase):
+    def test_load_A_to_A(self):
+        program = "\x7F"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        pass
+    
+    def test_load_A_to_B(self):
+        program = "\x78"
+        processor = gbc.Processor()
+        processor.registers["A"] = 100
+        gbc.run_instruction(program, processor)
+        self.assertEquals(processor.program_counter, 1)
+        self.assertEquals(processor.registers["A"], 100)
+        self.assertEquals(processor.registers["B"], 100)
+        pass
+
 if __name__ == "__main__":
     unittest.main()

@@ -48,6 +48,15 @@ def LD_h_8bit(processor,params):
 def LD_l_8bit(processor,params):
     processor.registers["L"] = params[0]
 
+@opcode(op=0x7F,size=1,clocks=4)
+def LD_A_into_A(processor,params):
+    pass
+
+@opcode(op=0x78,size=1,clocks=4)
+def LD_A_into_B(processor,params):
+    processor.registers["B"] = processor.registers["A"]
+    pass
+
 def run_instruction(program, processor):
     opcode = program[processor.program_counter]
     opcode_info = OPERATIONS[ord(opcode)]
