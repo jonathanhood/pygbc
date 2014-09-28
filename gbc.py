@@ -37,27 +37,32 @@ load_8bit_immediate(op=0x1E,dest="E")
 load_8bit_immediate(op=0x26,dest="H")
 load_8bit_immediate(op=0x2E,dest="L")
 
-def load_register(op, src, dest):
+def copy_register(op, src, dest):
     @opcode(op=op,size=1,clocks=4)
     def handler(processor, params):
         processor.registers[dest] = processor.registers[src]
 
-load_register(op=0x40,src="B",dest="B")
-load_register(op=0x41,src="C",dest="B")
-load_register(op=0x42,src="D",dest="B")
-load_register(op=0x43,src="E",dest="B")
-load_register(op=0x44,src="H",dest="B")
-load_register(op=0x45,src="L",dest="B")
-load_register(op=0x46,src="L",dest="B") # Load HL into B
+copy_register(op=0x40,src="B",dest="B")
+copy_register(op=0x41,src="C",dest="B")
+copy_register(op=0x42,src="D",dest="B")
+copy_register(op=0x43,src="E",dest="B")
+copy_register(op=0x44,src="H",dest="B")
+copy_register(op=0x45,src="L",dest="B")
 
-load_register(op=0x78,src="B",dest="A")
-load_register(op=0x79,src="C",dest="A")
-load_register(op=0x7A,src="D",dest="A")
-load_register(op=0x7B,src="E",dest="A")
-load_register(op=0x7C,src="H",dest="A")
-load_register(op=0x7D,src="L",dest="A")
-load_register(op=0x7E,src="L",dest="A") # Load HL into A
-load_register(op=0x7F,src="A",dest="A")
+copy_register(op=0x48,src="B",dest="C")
+copy_register(op=0x49,src="C",dest="C")
+copy_register(op=0x4A,src="D",dest="C")
+copy_register(op=0x4B,src="E",dest="C")
+copy_register(op=0x4C,src="H",dest="C")
+copy_register(op=0x4D,src="L",dest="C")
+
+copy_register(op=0x78,src="B",dest="A")
+copy_register(op=0x79,src="C",dest="A")
+copy_register(op=0x7A,src="D",dest="A")
+copy_register(op=0x7B,src="E",dest="A")
+copy_register(op=0x7C,src="H",dest="A")
+copy_register(op=0x7D,src="L",dest="A")
+copy_register(op=0x7F,src="A",dest="A")
 
 
 def run_instruction(program, processor):
