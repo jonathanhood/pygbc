@@ -1,3 +1,6 @@
+# virtualenv venv folder
+venv/
+
 # VIM Editor Files
 *.swp
 
