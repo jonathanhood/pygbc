@@ -132,6 +132,4 @@ def run_instruction(program, processor):
     processor.program_counter += opcode_info["size"]
     opcode_info["handler"](processor,params)
     
-if __name__ == "__main__":
-   print "Hello World"
  
