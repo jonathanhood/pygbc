@@ -24,7 +24,7 @@ class Processor:
             "H" : 0,
             "L" : 0
         }
-        self.memory = [0 for _ in range(0,2*1024)]
+        self.memory = [0 for _ in range(0,0xFFFF)]
 
 def load_8bit_immediate(op, dest):
     @opcode(op=op,size=2,clocks=8)
@@ -43,10 +43,23 @@ def load_from_memory(op,dest,addr):
         address = ( processor.registers[high_reg] << 8 ) + processor.registers[low_reg]
         processor.registers[dest] = processor.memory[address]
 
+def load_from_memory_half_addr(op,dest,addr): 
+    @opcode(op=op,size=1,clocks=8)
+    def handler(processor, params):
+        low_reg = processor.registers[addr]
+        address = 0xFF00 + low_reg
+        processor.registers[dest] = processor.memory[address]
+
 def copy_to_memory(op,src):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor, params):
         address = ( processor.registers["H"] << 8 ) + processor.registers["L"]
+        processor.memory[address] = processor.registers[src]
+
+def copy_to_memory_half_addr(op,src,addr):
+    @opcode(op=op,size=1,clocks=8)
+    def handler(processor, params):
+        address = 0xFF00 + processor.registers[addr]
         processor.memory[address] = processor.registers[src]
 
 def copy_immediate_to_memory(op):
@@ -74,6 +87,8 @@ load_8bit_immediate(op=0x26,dest="H")
 load_8bit_immediate(op=0x2E,dest="L")
 
 copy_immediate_to_memory(op=0x36)
+
+load_8bit_immediate(op=0x3E,dest="A")
 
 copy_register(op=0x40,src="B",dest="B")
 copy_register(op=0x41,src="C",dest="B")
@@ -139,6 +154,9 @@ copy_register(op=0x7D,src="L",dest="A")
 load_from_memory(op=0x7E,dest="A",addr="HL")
 copy_register(op=0x7F,src="A",dest="A")
 
+copy_to_memory_half_addr(op=0xE2,src="A",addr="C")
+
+load_from_memory_half_addr(op=0xF2,dest="A",addr="C")
 copy_from_immediate_address(op=0xFA,dest="A")
 
 

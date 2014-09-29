@@ -8,7 +8,8 @@ from itertools import chain
     ("\x16", "D"),
     ("\x1E", "E"),
     ("\x26", "H"),
-    ("\x2E", "L")
+    ("\x2E", "L"),
+    ("\x3E", "A")
 ])
 def test_8bit_loads(opcode, reg):
     program = "{}\x21".format(opcode)
@@ -64,6 +65,17 @@ def test_load_from_memory(opcode,dest,high,low):
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
 
+@pytest.mark.parametrize("opcode,dest,low", [
+    ("\xF2", "A", "C"),
+])
+def test_load_from_memory_half_addr(opcode,dest,low):
+    processor = gbc.Processor()
+    processor.memory[0xFF10] = 0x5A
+    processor.registers[low] = 0x10
+    gbc.run_instruction(opcode, processor)
+    assert processor.program_counter == 1
+    assert processor.registers[dest] == 0x5A
+
 @pytest.mark.parametrize("opcode,src", [
     ("\x70", "B"),
     ("\x71", "C"),
@@ -86,6 +98,17 @@ def test_load_to_memory(opcode,src):
         assert processor.memory[0x0110] == 0x10
     else:
         assert processor.memory[0x0110] == 0x5A
+
+@pytest.mark.parametrize("opcode,src,addr", [
+    ("\xE2", "A", "C"),
+])
+def test_load_to_memory_half_addr(opcode,src,addr):
+    processor = gbc.Processor()
+    processor.registers[src] = 0x5A
+    processor.registers[addr] = 0x01
+    gbc.run_instruction(opcode, processor)
+    assert processor.program_counter == 1
+    assert processor.memory[0xFF01] == 0x5A
 
 def test_copy_immediate_to_memory():
     program = "\x36\x5A"
