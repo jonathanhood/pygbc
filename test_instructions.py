@@ -62,3 +62,25 @@ def test_load_from_memory(opcode,dest):
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
 
+@pytest.mark.parametrize("opcode,src", [
+    ("\x70", "B"),
+    ("\x71", "C"),
+    ("\x72", "D"),
+    ("\x73", "E"),
+    ("\x74", "H"),
+    ("\x75", "L")
+])
+def test_load_to_memory(opcode,src):
+    processor = gbc.Processor()
+    processor.registers[src] = 0x5A
+    processor.registers["H"] = 0x01
+    processor.registers["L"] = 0x10
+    gbc.run_instruction(opcode, processor)
+    assert processor.program_counter == 1
+
+    if src == "H":
+        assert processor.memory[0x0110] == 0x01
+    elif src == "L":
+        assert processor.memory[0x0110] == 0x10
+    else:
+        assert processor.memory[0x0110] == 0x5A
