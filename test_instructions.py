@@ -21,8 +21,8 @@ def test_8bit_loads(opcode, reg):
 def register_copy_params(dest, base_opcode):
     registers = ["B","C","D","E","H","L"]
     return [ (chr(op),reg,dest) 
-            for reg,op 
-            in zip(registers,range(base_opcode,base_opcode + len(registers))) 
+            for op,reg 
+            in enumerate(registers,base_opcode)
     ]
 
 @pytest.mark.parametrize("opcode,src,dest", chain.from_iterable( [
