@@ -7,6 +7,12 @@ def load_from_memory(op,dest,addr):
         address = ( processor.registers[high_reg] << 8 ) + processor.registers[low_reg]
         processor.registers[dest] = processor.memory[address]
 
+@opcode(op=0xF2,size=1,clocks=8)
+def load_accumulator_from__memory_half(processor, params):
+    high, low = ( 0xFF00, processor.registers["C"])
+    address = ( high << 8 ) + low
+    processor.registers["A"] = processor.memory[address]
+
 load_from_memory(op=0x0A,dest="A",addr="BC")
 load_from_memory(op=0x1A,dest="A",addr="DE")
 load_from_memory(op=0x46,dest="B",addr="HL")
