@@ -18,6 +18,20 @@ def load_memory_from_accumulator_half(processor, params):
     address = ( high << 8 ) + low
     processor.memory[address] = processor.registers["A"]
 
+def load_to_memory_modify_addr(op,func):
+    @opcode(op=op,size=1,clocks=8)
+    def handler(processor,params):
+        high, low = ( processor.registers["H"], processor.registers["L"])
+        addr = ( high << 8 ) + low
+        processor.memory[addr] = processor.registers["A"]
+        addr = func(addr)
+        processor.registers["H"] = (addr >> 8) & 0x0FF
+        processor.registers["L"] = addr & 0x0FF
+
+
+load_to_memory_modify_addr(0x22,lambda x: x + 1)
+load_to_memory_modify_addr(0x32,lambda x: x - 1)
+
 copy_to_memory(op=0x02,src="A",dest="BC")
 copy_to_memory(op=0x12,src="A",dest="DE")
 
