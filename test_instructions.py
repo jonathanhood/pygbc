@@ -178,3 +178,18 @@ def test_copy_to_mem_and_increment_addr():
     assert processor.registers["L"] == 0x11
     assert processor.memory[0x0110] == 0x5A
 
+def test_copy_to_mem_immediate_address():
+    program = "\xE0\x11"
+    processor = gbc.Processor()
+    processor.registers["A"] = 0xA5
+    gbc.run_instruction(program,processor)
+    assert processor.program_counter == 2
+    assert processor.memory[0xFF11] == 0xA5
+
+def test_copy_from_mem_immediate_address():
+    program = "\xF0\x11"
+    processor = gbc.Processor()
+    processor.memory[0xFF11] = 0xA5
+    gbc.run_instruction(program,processor)
+    assert processor.program_counter == 2
+    assert processor.registers["A"] == 0xA5

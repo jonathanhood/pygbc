@@ -22,6 +22,11 @@ def load_accumulator_from__memory_half(processor, params):
     high, low = ( 0xFF, processor.registers["C"])
     address = ( high << 8 ) + low
     processor.registers["A"] = processor.memory[address]
+
+@opcode(op=0xF0,size=2,clocks=12)
+def load_accum_memory_imm_addr(processor, params):
+    addr = 0xFF00 + params[0]
+    processor.registers["A"] = processor.memory[addr]
     
 load_from_memory_modify_addr(0x2A,lambda x: x + 1)
 load_from_memory_modify_addr(0x3A,lambda x: x - 1)
