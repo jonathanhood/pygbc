@@ -122,6 +122,7 @@ def test_copy_immediate_to_memory():
     assert processor.program_counter == 2
     assert processor.memory[0x0110] == 0x5A
 
+
 def test_copy_from_immediate_address():
     program = "\xFA\x10\x01"
     processor = gbc.Processor()
@@ -129,3 +130,4 @@ def test_copy_from_immediate_address():
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 3
     assert processor.registers["A"] == 0x5A
+

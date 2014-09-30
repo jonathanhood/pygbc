@@ -14,7 +14,7 @@ def copy_immediate_to_memory(processor, params):
 
 @opcode(op=0xE2,size=1,clocks=8)
 def load_memory_from_accumulator_half(processor, params):
-    high, low = ( 0xFF00, processor.registers["C"])
+    high, low = ( 0xFF, processor.registers["C"])
     address = ( high << 8 ) + low
     processor.memory[address] = processor.registers["A"]
 
