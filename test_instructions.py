@@ -76,19 +76,22 @@ def test_load_from_memory_half_addr(opcode,dest,low):
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
 
-@pytest.mark.parametrize("opcode,src", [
-    ("\x70", "B"),
-    ("\x71", "C"),
-    ("\x72", "D"),
-    ("\x73", "E"),
-    ("\x74", "H"),
-    ("\x75", "L")
+@pytest.mark.parametrize("opcode,src,high,low", [
+    ("\x02", "A", "B", "C"),
+    ("\x12", "A", "D", "E"),
+    ("\x70", "B", "H", "L"),
+    ("\x71", "C", "H", "L"),
+    ("\x72", "D", "H", "L"),
+    ("\x73", "E", "H", "L"),
+    ("\x74", "H", "H", "L"),
+    ("\x75", "L", "H", "L"),
+    ("\x77", "A", "H", "L")
 ])
-def test_load_to_memory(opcode,src):
+def test_load_to_memory(opcode,src,high,low):
     processor = gbc.Processor()
     processor.registers[src] = 0x5A
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers[high] = 0x01
+    processor.registers[low] = 0x10
     gbc.run_instruction(opcode, processor)
     assert processor.program_counter == 1
 
