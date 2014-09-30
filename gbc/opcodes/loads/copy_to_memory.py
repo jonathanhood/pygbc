@@ -1,4 +1,4 @@
-from ..core import *
+from ...core import *
 
 def copy_to_memory(op,src,dest):
     @opcode(op=op,size=1,clocks=8)

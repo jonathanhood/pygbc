@@ -1,4 +1,4 @@
-from ..core import *
+from ...core import *
 
 def load_8bit_immediate(op, dest):
     @opcode(op=op,size=2,clocks=8)

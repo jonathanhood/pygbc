@@ -1,4 +1,4 @@
-from ..core import *
+from ...core import *
 
 def load_from_memory(op,dest,addr):
     @opcode(op=op,size=1,clocks=8)
