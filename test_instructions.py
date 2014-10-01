@@ -28,9 +28,7 @@ def test_16bit_loads(opcode, reg):
     processor = gbc.Processor()
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 3
-    assert processor.registers[reg[0]] == 0x10
-    assert processor.registers[reg[1]] == 0x01
-    
+    assert processor.registers[reg] == 0x0110
 
 def register_copy_params(dest, base_opcode):
     registers = ["B","C","D","E","H","L"]
