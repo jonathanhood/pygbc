@@ -17,6 +17,19 @@ def test_8bit_loads(opcode, reg):
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 2
     assert processor.registers[reg] == 0x21
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x01", "BC"),
+    ("\x11", "DE"),
+    ("\x21", "HL"),
+])
+def test_16bit_loads(opcode, reg):
+    program = "{}\x10\x01".format(opcode)
+    processor = gbc.Processor()
+    gbc.run_instruction(program, processor)
+    assert processor.program_counter == 3
+    assert processor.registers[reg[0]] == 0x10
+    assert processor.registers[reg[1]] == 0x01
     
 
 def register_copy_params(dest, base_opcode):
@@ -59,8 +72,8 @@ def test_register_copies(opcode,src,dest):
 def test_load_from_memory(opcode,dest,high,low):
     processor = gbc.Processor()
     processor.memory[0x0110] = 0x5A
-    processor.registers[high] = 0x01
-    processor.registers[low] = 0x10
+    processor.registers[high] = 0x10
+    processor.registers[low] = 0x01
     gbc.run_instruction(opcode, processor)
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
@@ -90,15 +103,15 @@ def test_load_from_memory_half_addr(opcode,dest,low):
 def test_load_to_memory(opcode,src,high,low):
     processor = gbc.Processor()
     processor.registers[src] = 0x5A
-    processor.registers[high] = 0x01
-    processor.registers[low] = 0x10
+    processor.registers[high] = 0x10
+    processor.registers[low] = 0x01
     gbc.run_instruction(opcode, processor)
     assert processor.program_counter == 1
 
     if src == "H":
-        assert processor.memory[0x0110] == 0x01
-    elif src == "L":
         assert processor.memory[0x0110] == 0x10
+    elif src == "L":
+        assert processor.memory[0x0110] == 0x01
     else:
         assert processor.memory[0x0110] == 0x5A
 
@@ -116,8 +129,8 @@ def test_load_to_memory_half_addr(opcode,src,addr):
 def test_copy_immediate_to_memory():
     program = "\x36\x5A"
     processor = gbc.Processor()
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers["H"] = 0x10
+    processor.registers["L"] = 0x01
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 2
     assert processor.memory[0x0110] == 0x5A
@@ -133,8 +146,8 @@ def test_copy_from_immediate_address():
 def test_copy_to_accum_and_decrement_addr():
     program = "\x3A"
     processor = gbc.Processor()
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers["H"] = 0x10
+    processor.registers["L"] = 0x01
     processor.memory[0x0110] = 0x5A
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 1
@@ -145,37 +158,37 @@ def test_copy_to_accum_and_decrement_addr():
 def test_copy_to_accum_and_increment_addr():
     program = "\x2A"
     processor = gbc.Processor()
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers["H"] = 0x10
+    processor.registers["L"] = 0x01
     processor.memory[0x0110] = 0x5A
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["A"] == 0x5A
-    assert processor.registers["H"] == 0x01
-    assert processor.registers["L"] == 0x11
+    assert processor.registers["H"] == 0x11
+    assert processor.registers["L"] == 0x01
 
 def test_copy_to_mem_and_decrement_addr():
     program = "\x32"
     processor = gbc.Processor()
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers["H"] = 0x10
+    processor.registers["L"] = 0x01
     processor.registers["A"] = 0x5A
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 1
-    assert processor.registers["H"] == 0x01
-    assert processor.registers["L"] == 0x0F
+    assert processor.registers["H"] == 0x0F
+    assert processor.registers["L"] == 0x01
     assert processor.memory[0x0110] == 0x5A
 
 def test_copy_to_mem_and_increment_addr():
     program = "\x22"
     processor = gbc.Processor()
-    processor.registers["H"] = 0x01
-    processor.registers["L"] = 0x10
+    processor.registers["H"] = 0x10
+    processor.registers["L"] = 0x01
     processor.registers["A"] = 0x5A
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 1
-    assert processor.registers["H"] == 0x01
-    assert processor.registers["L"] == 0x11
+    assert processor.registers["H"] == 0x11
+    assert processor.registers["L"] == 0x01
     assert processor.memory[0x0110] == 0x5A
 
 def test_copy_to_mem_immediate_address():
