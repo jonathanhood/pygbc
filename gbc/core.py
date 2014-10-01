@@ -40,7 +40,18 @@ class Registers:
         }
 
     def __setitem__(self,key,value):
-        self.reg[key] = value
+        if key in self.reg:
+            self.reg[key] = value
+        elif all(k in self.reg for k in key):
+            # Copy the value into registers
+            # 8-bits at a time. The leftmost
+            # item in the key points to the
+            # least-significant byte (little-endian)
+            for k in key:
+                self.reg[k] = value & 0x0FF
+                value = value >> 8
+        else:
+            raise IndexError("{} is not a valid register".format(key))
 
     def __getitem__(self,key):
         if key in self.reg:
