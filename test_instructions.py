@@ -152,8 +152,8 @@ def test_copy_to_accum_and_decrement_addr():
     gbc.run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["A"] == 0x5A
-    assert processor.registers["H"] == 0x01
-    assert processor.registers["L"] == 0x0F
+    assert processor.registers["H"] == 0x0F
+    assert processor.registers["L"] == 0x01
 
 def test_copy_to_accum_and_increment_addr():
     program = "\x2A"

@@ -3,13 +3,13 @@ from ...core import *
 def copy_to_memory(op,src,dest):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor, params):
-        high, low = dest[0], dest[1]
+        high, low = dest[1], dest[0]
         address = ( processor.registers[high] << 8 ) + processor.registers[low]
         processor.memory[address] = processor.registers[src]
 
 @opcode(op=0x36,size=2,clocks=12)
 def copy_immediate_to_memory(processor, params):
-    address = ( processor.registers["H"] << 8 ) + processor.registers["L"]
+    address = ( processor.registers["L"] << 8 ) + processor.registers["H"]
     processor.memory[address] = params[0]
 
 @opcode(op=0xE2,size=1,clocks=8)
@@ -26,12 +26,12 @@ def load_memory_immediate_address(processor, params):
 def load_to_memory_modify_addr(op,func):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor,params):
-        high, low = ( processor.registers["H"], processor.registers["L"])
+        high, low = ( processor.registers["L"], processor.registers["H"])
         addr = ( high << 8 ) + low
         processor.memory[addr] = processor.registers["A"]
         addr = func(addr)
-        processor.registers["H"] = (addr >> 8) & 0x0FF
-        processor.registers["L"] = addr & 0x0FF
+        processor.registers["L"] = (addr >> 8) & 0x0FF
+        processor.registers["H"] = addr & 0x0FF
 
 
 load_to_memory_modify_addr(0x22,lambda x: x + 1)

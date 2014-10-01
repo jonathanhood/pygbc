@@ -3,19 +3,19 @@ from ...core import *
 def load_from_memory(op,dest,addr):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor, params):
-        high_reg, low_reg = (addr[0], addr[1])
+        high_reg, low_reg = (addr[1], addr[0])
         address = ( processor.registers[high_reg] << 8 ) + processor.registers[low_reg]
         processor.registers[dest] = processor.memory[address]
 
 def load_from_memory_modify_addr(op,func):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor,params):
-        high, low = ( processor.registers["H"], processor.registers["L"])
+        high, low = ( processor.registers["L"], processor.registers["H"])
         addr = ( high << 8 ) + low
         processor.registers["A"] = processor.memory[addr]
         addr = func(addr)
-        processor.registers["H"] = (addr >> 8) & 0x0FF
-        processor.registers["L"] = addr & 0x0FF
+        processor.registers["L"] = (addr >> 8) & 0x0FF
+        processor.registers["H"] = addr & 0x0FF
 
 @opcode(op=0xF2,size=1,clocks=8)
 def load_accumulator_from__memory_half(processor, params):
