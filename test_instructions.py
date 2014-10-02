@@ -22,6 +22,7 @@ def test_8bit_loads(opcode, reg):
     ("\x01", "BC"),
     ("\x11", "DE"),
     ("\x21", "HL"),
+    ("\x31", "SP")
 ])
 def test_16bit_loads(opcode, reg):
     program = "{}\x10\x01".format(opcode)

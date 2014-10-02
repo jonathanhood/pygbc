@@ -9,13 +9,12 @@ def copy_to_memory(op,src,dest):
 
 @opcode(op=0x36,size=2,clocks=12)
 def copy_immediate_to_memory(processor, params):
-    address = ( processor.registers["L"] << 8 ) + processor.registers["H"]
+    address = processor.registers["HL"]
     processor.memory[address] = params[0]
 
 @opcode(op=0xE2,size=1,clocks=8)
 def load_memory_from_accumulator_half(processor, params):
-    high, low = ( 0xFF, processor.registers["C"])
-    address = ( high << 8 ) + low
+    address = 0xFF00 + processor.registers["C"]
     processor.memory[address] = processor.registers["A"]
 
 @opcode(0xE0,size=2,clocks=12)
@@ -26,12 +25,10 @@ def load_memory_immediate_address(processor, params):
 def load_to_memory_modify_addr(op,func):
     @opcode(op=op,size=1,clocks=8)
     def handler(processor,params):
-        high, low = ( processor.registers["L"], processor.registers["H"])
-        addr = ( high << 8 ) + low
+        addr = processor.registers["HL"]
         processor.memory[addr] = processor.registers["A"]
         addr = func(addr)
-        processor.registers["L"] = (addr >> 8) & 0x0FF
-        processor.registers["H"] = addr & 0x0FF
+        processor.registers["HL"] = addr
 
 
 load_to_memory_modify_addr(0x22,lambda x: x + 1)
