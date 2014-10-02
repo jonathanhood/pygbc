@@ -31,6 +31,7 @@ class Registers:
     def __init__(self):
         self.reg = {
             "A"  : 0,
+            "F"  : 0,
             "B"  : 0,
             "C"  : 0,
             "D"  : 0,

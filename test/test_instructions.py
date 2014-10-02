@@ -211,3 +211,33 @@ def test_copy_sp():
     assert processor.program_counter == 3
     assert processor.memory[0x0110] == 0x5AA5
 
+@pytest.mark.parametrize("opcode,reg", [
+    ("\xC5", "BC"),
+    ("\xD5", "DE"),
+    ("\xE5", "HL"),
+    ("\xF5", "AF"),
+])
+def test_push_stack(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["SP"] = 3
+    processor.registers[reg] = 0xA55A
+    gbc.run_instruction(program,processor)
+    assert processor.registers["SP"] == 1
+    assert processor.memory[3] == 0xA55A
+    
+@pytest.mark.parametrize("opcode,reg", [
+    ("\xC1", "BC"),
+    ("\xD1", "DE"),
+    ("\xE1", "HL"),
+    ("\xF1", "AF"),
+])
+def test_pop_stack(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["SP"] = 3
+    processor.memory[3] = 0xA55A
+    gbc.run_instruction(program,processor)
+    assert processor.registers["SP"] == 5
+    assert processor.registers[reg] == 0xA55A
+    
