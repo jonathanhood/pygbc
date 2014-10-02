@@ -30,6 +30,10 @@ def load_to_memory_modify_addr(op,func):
         addr = func(addr)
         processor.registers["HL"] = addr
 
+@opcode(op=0x08,size=3,clocks=20)
+def copy_stackpointer(processor,params):
+    addr = (params[1] << 8) + params[0]
+    processor.memory[addr] = processor.registers["SP"]
 
 load_to_memory_modify_addr(0x22,lambda x: x + 1)
 load_to_memory_modify_addr(0x32,lambda x: x - 1)

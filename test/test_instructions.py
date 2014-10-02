@@ -203,3 +203,11 @@ def test_copy_sp_and_add_imm():
     assert processor.program_counter == 2
     assert processor.registers["HL"] == 0x05
 
+def test_copy_sp():
+    program = "\x08\x10\x01"
+    processor = gbc.Processor()
+    processor.registers["SP"] = 0x5AA5
+    gbc.run_instruction(program,processor)
+    assert processor.program_counter == 3
+    assert processor.memory[0x0110] == 0x5AA5
+
