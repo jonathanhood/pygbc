@@ -5,6 +5,10 @@ def copy_register(op, src, dest):
     def handler(processor, params):
         processor.registers[dest] = processor.registers[src]
 
+@opcode(op=0xF8,size=2,clocks=12)
+def copy_sp_plus_imm(processor,params):
+    processor.registers["HL"] = processor.registers["SP"] + params[0]
+
 copy_register(op=0x40,src="B",dest="B")
 copy_register(op=0x41,src="C",dest="B")
 copy_register(op=0x42,src="D",dest="B")

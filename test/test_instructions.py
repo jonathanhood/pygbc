@@ -194,3 +194,12 @@ def test_copy_from_mem_immediate_address():
     gbc.run_instruction(program,processor)
     assert processor.program_counter == 2
     assert processor.registers["A"] == 0xA5
+
+def test_copy_sp_and_add_imm():
+    program = "\xF8\x02"
+    processor = gbc.Processor()
+    processor.registers["SP"] = 0x03
+    gbc.run_instruction(program,processor)
+    assert processor.program_counter == 2
+    assert processor.registers["HL"] == 0x05
+
