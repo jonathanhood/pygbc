@@ -1,5 +1,8 @@
 import pytest
-from gbc.core import Registers
+from gbc.core import Registers, print_opcodes
+
+def test_printing_all_opcodes():
+    print_opcodes()
 
 def test_throw_on_bad_write():
     regs = Registers()

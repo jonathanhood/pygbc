@@ -1,26 +1,28 @@
 
-class OpcodeFramework(type):
-    handlers = {}
+class OpcodeHandler:
+    all_handlers = {}
 
-    @staticmethod
-    def make_handler(opcode):
-        return OpcodeFramework.handlers[opcode]()
+    def __init__(self, opcode, width, clocks, handler):
+        self.opcode = opcode
+        self.instruction_width = width 
+        self.number_of_clocks = clocks
+        self.handler = handler
+        OpcodeHandler.all_handlers[opcode] = self
 
-    def __new__(cls, name, bases, attrs):
-        result = super(OpcodeFramework, cls).__new__(cls, name, bases, attrs)
-        OpcodeFramework.handlers[attrs["opcode"]] = result
-        return result
+    def opcode_handler(self,processor,params):
+        return self.handler(processor,params)
+
+    def __str__(self):
+        return "<GBC Opcode {} Width {} Clocks {}>".format(
+                    self.opcode,
+                    self.instruction_width,
+                    self.number_of_clocks
+                )
 
 def opcode(op, size, clocks):
     def deco(func):
         # Define a new Opcode Handler
-        class OpcodeHandler:
-            __metaclass__ = OpcodeFramework
-            opcode = op
-            instruction_width = size
-            number_of_clocks = clocks
-            def opcode_handler(self,processor,params):
-                return func(processor,params) 
+        OpcodeHandler(op,size,clocks,func)
 
         # Return the function by convention. It will
         # never actually be used though
@@ -79,11 +81,18 @@ class Processor:
 
 def run_instruction(program, processor):
     opcode = program[processor.program_counter]
-    opcode_info = OpcodeFramework.make_handler( ord(opcode) )
+    opcode_info = OpcodeHandler.all_handlers[ ord(opcode) ]
     params = [ ord(p) for p in 
                 program[processor.program_counter + 1 
                     : processor.program_counter + opcode_info.instruction_width
              ]]
     processor.program_counter += opcode_info.instruction_width
     opcode_info.opcode_handler(processor,params)
-    
+
+def print_opcodes():
+    sorted_opcodes = [opcode for opcode in OpcodeHandler.all_handlers.iterkeys()]
+    sorted_opcodes.sort()
+    opcode_meta = [OpcodeHandler.all_handlers[op] for op in sorted_opcodes]
+    for meta in opcode_meta:
+        print meta
+
