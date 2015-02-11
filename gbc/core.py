@@ -29,6 +29,30 @@ def opcode(op, size, clocks):
         return func
     return deco
 
+class Flags:
+    def __init__(self):
+        self.flags = {
+            "zero" : False,
+            "carry" : False,
+            "half_carry" : False,
+            "subtract" : False
+        }
+
+    def __setitem__(self,key,value):
+        if type(value) is not bool:
+            raise ValueError("{} is not a boolean value".format(value))
+
+        if key in self.flags:
+            self.flags[key] = value
+        else:
+            raise IndexError("{} is not a valid flag".format(key))
+    
+    def __getitem__(self,key):
+        if key in self.flags:
+            return self.flags[key]
+        else:
+            raise IndexError("{} is not a valid flag".format(key))
+            
 class Registers:
     def __init__(self):
         self.reg = {
@@ -77,6 +101,7 @@ class Processor:
     def __init__(self):
         self.program_counter = 0
         self.registers = Registers()
+        self.flags = Flags()
         self.memory = [0 for _ in range(0,0xFFFF)]
 
 def run_instruction(program, processor):

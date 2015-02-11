@@ -241,3 +241,91 @@ def test_pop_stack(opcode,reg):
     assert processor.registers["SP"] == 5
     assert processor.registers[reg] == 0xA55A
     
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x87", "A"),
+    ("\x80", "B"),
+    ("\x81", "C"),
+    ("\x82", "D"),
+])
+def test_basic_add(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["A"] = 5
+    processor.registers[reg] = 4
+    gbc.run_instruction(program,processor)
+    
+    if reg == "A":
+        assert processor.registers["A"] == 8
+    else:
+        assert processor.registers["A"] == 9
+    
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == False 
+    assert processor.flags["half_carry"] == False 
+    assert processor.flags["carry"] == False 
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x87", "A"),
+    ("\x80", "B"),
+    ("\x81", "C"),
+    ("\x82", "D"),
+    ("\x83", "E"),
+    ("\x84", "H"),
+    ("\x85", "L"),
+])
+def test_add_half_carry(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["A"] = 0x08
+    processor.registers[reg] = 0x08
+    gbc.run_instruction(program,processor)
+
+    assert processor.registers["A"] == 0x10 
+    assert processor.flags["zero"] == False 
+    assert processor.flags["subtract"] == False 
+    assert processor.flags["half_carry"] == True 
+    assert processor.flags["carry"] == False 
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x87", "A"),
+    ("\x80", "B"),
+    ("\x81", "C"),
+    ("\x82", "D"),
+    ("\x83", "E"),
+    ("\x84", "H"),
+    ("\x85", "L"),
+])
+def test_add_full_carry(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["A"] = 0x80
+    processor.registers[reg] = 0x80
+    gbc.run_instruction(program,processor)
+
+    assert processor.registers["A"] == 0 
+    assert processor.flags["zero"] == True 
+    assert processor.flags["subtract"] == False 
+    assert processor.flags["half_carry"] == False 
+    assert processor.flags["carry"] == True
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x87", "A"),
+    ("\x80", "B"),
+    ("\x81", "C"),
+    ("\x82", "D"),
+    ("\x83", "E"),
+    ("\x84", "H"),
+    ("\x85", "L"),
+])
+def test_add_both_carry(opcode,reg):
+    program = opcode
+    processor = gbc.Processor()
+    processor.registers["A"] = 0x88
+    processor.registers[reg] = 0x88
+    gbc.run_instruction(program,processor)
+
+    assert processor.registers["A"] == 0x10
+    assert processor.flags["zero"] == False 
+    assert processor.flags["subtract"] == False 
+    assert processor.flags["half_carry"] == True 
+    assert processor.flags["carry"] == True
