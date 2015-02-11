@@ -121,3 +121,7 @@ def print_opcodes():
     for meta in opcode_meta:
         print meta
 
+if __name__ == "__main__":
+    from opcodes import *
+    print "{} opcodes have been implemented!".format(len(OpcodeHandler.all_handlers))
+

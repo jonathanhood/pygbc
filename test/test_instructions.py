@@ -329,3 +329,4 @@ def test_add_both_carry(opcode,reg):
     assert processor.flags["subtract"] == False 
     assert processor.flags["half_carry"] == True 
     assert processor.flags["carry"] == True
+
