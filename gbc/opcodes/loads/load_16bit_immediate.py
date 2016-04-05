@@ -1,5 +1,6 @@
 from ...core import *
 
+
 def load_16bit_immediate(op, dest):
     @opcode(op=op,size=3,clocks=12)
     def handler(processor, params):
