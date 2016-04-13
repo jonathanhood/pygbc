@@ -1,5 +1,5 @@
 from gbc.core import opcode
-from util import perform_addition_16bit
+from util import perform_addition_16bit, perform_subtraction_16bit
 
 
 def alu_16bit_add(op, src):
@@ -14,11 +14,19 @@ def alu_16bit_add(op, src):
         processor.flags["half_carry"] = result.half_carry
         processor.flags["subtract"] = False
 
+
 def alu_16bit_increment(op, reg):
     @opcode(op=op, size=1, clocks=8)
     def handler(processor, params):
         accum = processor.registers[reg]
         result = perform_addition_16bit(accum, 1)
+        processor.registers[reg] = result.value
+
+def alu_16bit_decrement(op, reg):
+    @opcode(op=op, size=1, clocks=8)
+    def handler(processor, params):
+        accum = processor.registers[reg]
+        result = perform_subtraction_16bit(accum, 1)
         processor.registers[reg] = result.value
 
 alu_16bit_add(0x09, "BC")
@@ -31,6 +39,11 @@ alu_16bit_increment(0x13, "DE")
 alu_16bit_increment(0x23, "HL")
 alu_16bit_increment(0x33, "SP")
 
+alu_16bit_decrement(0x0B, "BC")
+alu_16bit_decrement(0x1B, "DE")
+alu_16bit_decrement(0x2B, "HL")
+alu_16bit_decrement(0x3B, "SP")
+
 
 @opcode(op=0xE8, size=2, clocks=16)
 def stackpointer_immediate_add(processor, params):
@@ -40,5 +53,4 @@ def stackpointer_immediate_add(processor, params):
     processor.flags["zero"] = False
     processor.flags["carry"] = False
     processor.flags["half_carry"] = False
-    processor.flags["subtract"] = False
 

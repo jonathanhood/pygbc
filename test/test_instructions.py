@@ -378,3 +378,18 @@ def test_16bit_increments(opcode, reg):
     run_instruction(program, processor)
 
     assert processor.registers[reg] == 0x8889
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x0B", "BC"),
+    ("\x1B", "DE"),
+    ("\x2B", "HL"),
+    ("\x3B", "SP"),
+])
+def test_16bit_decrements(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers[reg] = 0x8888
+    run_instruction(program, processor)
+
+    assert processor.registers[reg] == 0x8887
