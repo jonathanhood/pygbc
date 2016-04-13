@@ -331,6 +331,76 @@ def test_add_both_carry(opcode,reg):
     assert processor.flags["half_carry"] == True 
     assert processor.flags["carry"] == True
 
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x97", "A"),
+    ("\x90", "B"),
+    ("\x91", "C"),
+    ("\x92", "D"),
+    ("\x93", "E"),
+    ("\x94", "H"),
+    ("\x95", "L"),
+])
+def test_basic_sub(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 6
+    processor.registers[reg] = 4
+    run_instruction(program, processor)
+
+    if reg == "A":
+        assert processor.registers["A"] == 0
+    else:
+        assert processor.registers["A"] == 2
+
+    assert processor.flags["zero"] == (reg == "A")
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x90", "B"),
+    ("\x91", "C"),
+    ("\x92", "D"),
+    ("\x93", "E"),
+    ("\x94", "H"),
+    ("\x95", "L"),
+])
+def test_sub_full_borrow(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x00
+    processor.registers[reg] = 0x01
+    run_instruction(program, processor)
+
+    assert processor.registers["A"] == 0x80
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == False
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x90", "B"),
+    ("\x91", "C"),
+    ("\x92", "D"),
+    ("\x93", "E"),
+    ("\x94", "H"),
+    ("\x95", "L"),
+])
+def test_sub_half_borrow(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x10
+    processor.registers[reg] = 0x01
+    run_instruction(program, processor)
+
+    assert processor.registers["A"] == 0x0F
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
 
 @pytest.mark.parametrize("opcode,reg", [
     ("\x09", "BC"),
