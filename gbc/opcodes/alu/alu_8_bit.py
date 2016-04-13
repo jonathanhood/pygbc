@@ -42,6 +42,45 @@ def alu_8bit_sbc(op, src):
         processor.flags["subtract"] = True
 
 
+def alu_8bit_and(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        accum = processor.registers["A"]
+        value = processor.registers[src]
+        result = accum & value
+
+        processor.registers["A"] = result
+        processor.flags["zero"] = result == 0
+        processor.flags["carry"] = False
+        processor.flags["half_carry"] = True
+        processor.flags["subtract"] = False
+
+def alu_8bit_or(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        accum = processor.registers["A"]
+        value = processor.registers[src]
+        result = accum | value
+
+        processor.registers["A"] = result
+        processor.flags["zero"] = result == 0
+        processor.flags["carry"] = False
+        processor.flags["half_carry"] = False
+        processor.flags["subtract"] = False
+
+def alu_8bit_xor(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        accum = processor.registers["A"]
+        value = processor.registers[src]
+        result = accum ^ value
+
+        processor.registers["A"] = result
+        processor.flags["zero"] = result == 0
+        processor.flags["carry"] = False
+        processor.flags["half_carry"] = False
+        processor.flags["subtract"] = False
+
 alu_8bit_add(0x80, "B") 
 alu_8bit_add(0x81, "C") 
 alu_8bit_add(0x82, "D") 
@@ -65,3 +104,27 @@ alu_8bit_sbc(0x9B, "E")
 alu_8bit_sbc(0x9C, "H")
 alu_8bit_sbc(0x9D, "L")
 alu_8bit_sbc(0x9F, "A")
+
+alu_8bit_and(0xA0, "B")
+alu_8bit_and(0xA1, "C")
+alu_8bit_and(0xA2, "D")
+alu_8bit_and(0xA3, "E")
+alu_8bit_and(0xA4, "H")
+alu_8bit_and(0xA5, "L")
+alu_8bit_and(0xA7, "A")
+
+alu_8bit_or(0xB0, "B")
+alu_8bit_or(0xB1, "C")
+alu_8bit_or(0xB2, "D")
+alu_8bit_or(0xB3, "E")
+alu_8bit_or(0xB4, "H")
+alu_8bit_or(0xB5, "L")
+alu_8bit_or(0xB7, "A")
+
+alu_8bit_xor(0xA8, "B")
+alu_8bit_xor(0xA9, "C")
+alu_8bit_xor(0xAA, "D")
+alu_8bit_xor(0xAB, "E")
+alu_8bit_xor(0xAC, "H")
+alu_8bit_xor(0xAD, "L")
+alu_8bit_xor(0xAF, "A")
