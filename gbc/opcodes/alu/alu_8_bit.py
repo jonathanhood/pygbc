@@ -27,6 +27,20 @@ def alu_8bit_sub(op, src):
         processor.flags["half_carry"] = result.half_carry
         processor.flags["subtract"] = True
 
+def alu_8bit_sbc(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        accum = processor.registers["A"]
+        value = processor.registers[src]
+        if processor.flags["carry"]:
+            value += 1
+        result = perform_subtraction_8bit(accum, value)
+        processor.registers["A"] = result.value
+        processor.flags["zero"] = result.zero
+        processor.flags["carry"] = result.carry
+        processor.flags["half_carry"] = result.half_carry
+        processor.flags["subtract"] = True
+
 
 alu_8bit_add(0x80, "B") 
 alu_8bit_add(0x81, "C") 
@@ -43,3 +57,11 @@ alu_8bit_sub(0x93, "E")
 alu_8bit_sub(0x94, "H")
 alu_8bit_sub(0x95, "L")
 alu_8bit_sub(0x97, "A")
+
+alu_8bit_sbc(0x98, "B")
+alu_8bit_sbc(0x99, "C")
+alu_8bit_sbc(0x9A, "D")
+alu_8bit_sbc(0x9B, "E")
+alu_8bit_sbc(0x9C, "H")
+alu_8bit_sbc(0x9D, "L")
+alu_8bit_sbc(0x9F, "A")

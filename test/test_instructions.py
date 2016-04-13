@@ -403,6 +403,72 @@ def test_sub_half_borrow(opcode, reg):
 
 
 @pytest.mark.parametrize("opcode,reg", [
+    ("\x98", "B"),
+    ("\x99", "C"),
+    ("\x9A", "D"),
+    ("\x9B", "E"),
+    ("\x9C", "H"),
+    ("\x9D", "L"),
+])
+def test_sbc_carry_set(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x10
+    processor.registers[reg] = 0x01
+    processor.flags["carry"] = True
+    run_instruction(program, processor)
+
+    assert processor.registers["A"] == 0xE
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x98", "B"),
+    ("\x99", "C"),
+    ("\x9A", "D"),
+    ("\x9B", "E"),
+    ("\x9C", "H"),
+    ("\x9D", "L"),
+])
+def test_sbc_carry_set(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x10
+    processor.registers[reg] = 0x01
+    processor.flags["carry"] = True
+    run_instruction(program, processor)
+
+    assert processor.registers["A"] == 0xE
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x98", "B"),
+    ("\x99", "C"),
+    ("\x9A", "D"),
+    ("\x9B", "E"),
+    ("\x9C", "H"),
+    ("\x9D", "L"),
+])
+def test_sbc_carry_cleared(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x10
+    processor.registers[reg] = 0x01
+    processor.flags["carry"] = False
+    run_instruction(program, processor)
+
+    assert processor.registers["A"] == 0xF
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
+@pytest.mark.parametrize("opcode,reg", [
     ("\x09", "BC"),
     ("\x19", "DE"),
     ("\x29", "HL"),
