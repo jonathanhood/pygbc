@@ -1,6 +1,7 @@
 import pytest
-import gbc
+from gbc.core import Processor, run_instruction
 from itertools import chain
+from gbc.opcodes import *
 
 @pytest.mark.parametrize("opcode,reg", [
     ("\x06", "B"),
@@ -13,8 +14,8 @@ from itertools import chain
 ])
 def test_8bit_loads(opcode, reg):
     program = "{}\x21".format(opcode)
-    processor = gbc.Processor()
-    gbc.run_instruction(program, processor)
+    processor = Processor()
+    run_instruction(program, processor)
     assert processor.program_counter == 2
     assert processor.registers[reg] == 0x21
 
@@ -26,8 +27,8 @@ def test_8bit_loads(opcode, reg):
 ])
 def test_16bit_loads(opcode, reg):
     program = "{}\x10\x01".format(opcode)
-    processor = gbc.Processor()
-    gbc.run_instruction(program, processor)
+    processor = Processor()
+    run_instruction(program, processor)
     assert processor.program_counter == 3
     assert processor.registers[reg] == 0x0110
 
@@ -49,9 +50,9 @@ def register_copy_params(dest, base_opcode):
     register_copy_params("L", 0x68)
 ]))
 def test_register_copies(opcode,src,dest):
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers[src] = 100
-    gbc.run_instruction(opcode, processor)
+    run_instruction(opcode, processor)
     assert processor.program_counter == 1
     assert processor.registers[src] == 100
     assert processor.registers[dest] == 100
@@ -69,10 +70,10 @@ def test_register_copies(opcode,src,dest):
     ("\x7E", "A", "HL")
 ])
 def test_load_from_memory(opcode,dest,addr):
-    processor = gbc.Processor()
+    processor = Processor()
     processor.memory[0x0110] = 0x5A
     processor.registers[addr] = 0x0110
-    gbc.run_instruction(opcode, processor)
+    run_instruction(opcode, processor)
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
 
@@ -80,10 +81,10 @@ def test_load_from_memory(opcode,dest,addr):
     ("\xF2", "A", "C"),
 ])
 def test_load_from_memory_half_addr(opcode,dest,low):
-    processor = gbc.Processor()
+    processor = Processor()
     processor.memory[0xFF10] = 0x5A
     processor.registers[low] = 0x10
-    gbc.run_instruction(opcode, processor)
+    run_instruction(opcode, processor)
     assert processor.program_counter == 1
     assert processor.registers[dest] == 0x5A
 
@@ -99,10 +100,10 @@ def test_load_from_memory_half_addr(opcode,dest,low):
     ("\x77", "A", "HL")
 ])
 def test_load_to_memory(opcode,src,addr):
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers[src] = 0x5A
     processor.registers[addr] = 0x0110
-    gbc.run_instruction(opcode, processor)
+    run_instruction(opcode, processor)
     assert processor.program_counter == 1
 
     if src == "H":
@@ -116,98 +117,98 @@ def test_load_to_memory(opcode,src,addr):
     ("\xE2", "A", "C"),
 ])
 def test_load_to_memory_half_addr(opcode,src,addr):
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers[src] = 0x5A
     processor.registers[addr] = 0x01
-    gbc.run_instruction(opcode, processor)
+    run_instruction(opcode, processor)
     assert processor.program_counter == 1
     assert processor.memory[0xFF01] == 0x5A
 
 def test_copy_immediate_to_memory():
     program = "\x36\x5A"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["HL"] = 0x0110
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 2
     assert processor.memory[0x0110] == 0x5A
 
 def test_copy_from_immediate_address():
     program = "\xFA\x10\x01"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.memory[0x0110] = 0x5A
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 3
     assert processor.registers["A"] == 0x5A
 
 def test_copy_to_accum_and_decrement_addr():
     program = "\x3A"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["HL"] = 0x0110
     processor.memory[0x0110] = 0x5A
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["A"] == 0x5A
     assert processor.registers["HL"] == 0x010F
 
 def test_copy_to_accum_and_increment_addr():
     program = "\x2A"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["HL"] = 0x0110
     processor.memory[0x0110] = 0x5A
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["A"] == 0x5A
     assert processor.registers["HL"] == 0x0111
 
 def test_copy_to_mem_and_decrement_addr():
     program = "\x32"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["HL"] = 0x0110
     processor.registers["A"] = 0x5A
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["HL"] == 0x010F
     assert processor.memory[0x0110] == 0x5A
 
 def test_copy_to_mem_and_increment_addr():
     program = "\x22"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["HL"] = 0x0110
     processor.registers["A"] = 0x5A
-    gbc.run_instruction(program, processor)
+    run_instruction(program, processor)
     assert processor.program_counter == 1
     assert processor.registers["HL"] == 0x0111
     assert processor.memory[0x0110] == 0x5A
 
 def test_copy_to_mem_immediate_address():
     program = "\xE0\x11"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["A"] = 0xA5
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.program_counter == 2
     assert processor.memory[0xFF11] == 0xA5
 
 def test_copy_from_mem_immediate_address():
     program = "\xF0\x11"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.memory[0xFF11] = 0xA5
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.program_counter == 2
     assert processor.registers["A"] == 0xA5
 
 def test_copy_sp_and_add_imm():
     program = "\xF8\x02"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["SP"] = 0x03
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.program_counter == 2
     assert processor.registers["HL"] == 0x05
 
 def test_copy_sp():
     program = "\x08\x10\x01"
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["SP"] = 0x5AA5
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.program_counter == 3
     assert processor.memory[0x0110] == 0x5AA5
 
@@ -219,10 +220,10 @@ def test_copy_sp():
 ])
 def test_push_stack(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["SP"] = 3
     processor.registers[reg] = 0xA55A
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.registers["SP"] == 1
     assert processor.memory[3] == 0xA55A
     
@@ -234,10 +235,10 @@ def test_push_stack(opcode,reg):
 ])
 def test_pop_stack(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["SP"] = 3
     processor.memory[3] = 0xA55A
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     assert processor.registers["SP"] == 5
     assert processor.registers[reg] == 0xA55A
     
@@ -249,10 +250,10 @@ def test_pop_stack(opcode,reg):
 ])
 def test_basic_add(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["A"] = 5
     processor.registers[reg] = 4
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
     
     if reg == "A":
         assert processor.registers["A"] == 8
@@ -275,10 +276,10 @@ def test_basic_add(opcode,reg):
 ])
 def test_add_half_carry(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["A"] = 0x08
     processor.registers[reg] = 0x08
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
 
     assert processor.registers["A"] == 0x10 
     assert processor.flags["zero"] == False 
@@ -297,10 +298,10 @@ def test_add_half_carry(opcode,reg):
 ])
 def test_add_full_carry(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["A"] = 0x80
     processor.registers[reg] = 0x80
-    gbc.run_instruction(program,processor)
+    run_instruction(program,processor)
 
     assert processor.registers["A"] == 0 
     assert processor.flags["zero"] == True 
@@ -319,10 +320,10 @@ def test_add_full_carry(opcode,reg):
 ])
 def test_add_both_carry(opcode,reg):
     program = opcode
-    processor = gbc.Processor()
+    processor = Processor()
     processor.registers["A"] = 0x88
     processor.registers[reg] = 0x88
-    gbc.run_instruction(program,processor)
+    run_instruction(program, processor)
 
     assert processor.registers["A"] == 0x10
     assert processor.flags["zero"] == False 
@@ -330,3 +331,50 @@ def test_add_both_carry(opcode,reg):
     assert processor.flags["half_carry"] == True 
     assert processor.flags["carry"] == True
 
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x09", "BC"),
+    ("\x19", "DE"),
+    ("\x29", "HL"),
+    ("\x39", "SP"),
+])
+def test_16bit_adds(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["HL"] = 0x8888
+    processor.registers[reg] = 0x8888
+    run_instruction(program, processor)
+
+    assert processor.registers["HL"] == 0x1110
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == False
+    assert processor.flags["half_carry"] == True
+    assert processor.flags["carry"] == True
+
+
+def test_stackpointer_immediate_add():
+    program = '\xE8\x10'
+    processor = Processor()
+    processor.registers["SP"] = 0x8888
+    run_instruction(program, processor)
+
+    assert processor.registers["SP"] == 0x8898
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == False
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == False
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x03", "BC"),
+    ("\x13", "DE"),
+    ("\x23", "HL"),
+    ("\x33", "SP"),
+])
+def test_16bit_increments(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers[reg] = 0x8888
+    run_instruction(program, processor)
+
+    assert processor.registers[reg] == 0x8889

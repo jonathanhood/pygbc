@@ -1,4 +1,4 @@
-from ...core import *
+from gbc.core import opcode
 
 
 def load_8bit_immediate(op, dest):

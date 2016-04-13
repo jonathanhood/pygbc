@@ -1,4 +1,4 @@
-from ...core import *
+from gbc.core import opcode
 
 
 def copy_register(op, src, dest):

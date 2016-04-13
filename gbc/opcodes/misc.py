@@ -1,4 +1,4 @@
-from ..core import *
+from gbc.core import opcode
  
 
 @opcode(op=0xFA, size=3, clocks=16)

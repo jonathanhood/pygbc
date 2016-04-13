@@ -110,7 +110,7 @@ class Processor:
 
 def run_instruction(program, processor):
     opcode = program[processor.program_counter]
-    opcode_info = OpcodeHandler.all_handlers[ ord(opcode) ]
+    opcode_info = OpcodeHandler.all_handlers[ord(opcode)]
     params = [ord(p) for p in program[processor.program_counter + 1: processor.program_counter + opcode_info.instruction_width]]
     processor.program_counter += opcode_info.instruction_width
     opcode_info.opcode_handler(processor,params)
