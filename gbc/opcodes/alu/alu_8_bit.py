@@ -81,6 +81,40 @@ def alu_8bit_xor(op, src):
         processor.flags["half_carry"] = False
         processor.flags["subtract"] = False
 
+def alu_8bit_cp(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        accum = processor.registers["A"]
+        value = processor.registers[src]
+        result = perform_subtraction_8bit(accum, value)
+        processor.flags["zero"] = result.zero
+        processor.flags["carry"] = result.carry
+        processor.flags["half_carry"] = result.half_carry
+        processor.flags["subtract"] = True
+
+def alu_8bit_increment(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        value = processor.registers[src]
+        result = perform_addition_8bit(value, 1)
+        processor.registers[src] = result.value
+        processor.flags["zero"] = result.zero
+        processor.flags["carry"] = result.carry
+        processor.flags["half_carry"] = result.half_carry
+        processor.flags["subtract"] = False
+
+def alu_8bit_decrement(op, src):
+    @opcode(op=op, size=1, clocks=4)
+    def handler(processor, params):
+        value = processor.registers[src]
+        result = perform_subtraction_8bit(value, 1)
+        processor.registers[src] = result.value
+        processor.flags["zero"] = result.zero
+        processor.flags["carry"] = result.carry
+        processor.flags["half_carry"] = result.half_carry
+        processor.flags["subtract"] = True
+
+
 alu_8bit_add(0x80, "B") 
 alu_8bit_add(0x81, "C") 
 alu_8bit_add(0x82, "D") 
@@ -128,3 +162,28 @@ alu_8bit_xor(0xAB, "E")
 alu_8bit_xor(0xAC, "H")
 alu_8bit_xor(0xAD, "L")
 alu_8bit_xor(0xAF, "A")
+
+alu_8bit_cp(0xB8, "B")
+alu_8bit_cp(0xB9, "C")
+alu_8bit_cp(0xBA, "D")
+alu_8bit_cp(0xBB, "E")
+alu_8bit_cp(0xBC, "H")
+alu_8bit_cp(0xBD, "L")
+alu_8bit_cp(0xBF, "A")
+
+alu_8bit_increment(0x04, "B")
+alu_8bit_increment(0x0C, "C")
+alu_8bit_increment(0x14, "D")
+alu_8bit_increment(0x1C, "E")
+alu_8bit_increment(0x24, "H")
+alu_8bit_increment(0x2C, "L")
+alu_8bit_increment(0x3C, "A")
+
+alu_8bit_decrement(0x05, "B")
+alu_8bit_decrement(0x0D, "C")
+alu_8bit_decrement(0x15, "D")
+alu_8bit_decrement(0x1D, "E")
+alu_8bit_decrement(0x25, "H")
+alu_8bit_decrement(0x2D, "L")
+alu_8bit_decrement(0x3D, "A")
+

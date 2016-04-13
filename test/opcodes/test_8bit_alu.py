@@ -291,3 +291,65 @@ def test_8bit_xor(opcode, reg):
     assert processor.flags["subtract"] == False
     assert processor.flags["half_carry"] == False
     assert processor.flags["carry"] == False
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\xB8", "B"),
+    ("\xB9", "C"),
+    ("\xBA", "D"),
+    ("\xBB", "E"),
+    ("\xBC", "H"),
+    ("\xBD", "L"),
+])
+def test_8bit_cp(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers["A"] = 0x01
+    processor.registers[reg] = 0x01
+    run_instruction(program, processor)
+
+    assert processor.flags["zero"] == True
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
+
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x04", "B"),
+    ("\x0C", "C"),
+    ("\x14", "D"),
+    ("\x1C", "E"),
+    ("\x24", "H"),
+    ("\x2C", "L"),
+])
+def test_8bit_increment(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers[reg] = 0x01
+    run_instruction(program, processor)
+
+    assert processor.registers[reg] == 0x02
+    assert processor.flags["zero"] == False
+    assert processor.flags["subtract"] == False
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == False
+
+@pytest.mark.parametrize("opcode,reg", [
+    ("\x05", "B"),
+    ("\x0D", "C"),
+    ("\x15", "D"),
+    ("\x1D", "E"),
+    ("\x25", "H"),
+    ("\x2D", "L"),
+])
+def test_8bit_decrement(opcode, reg):
+    program = opcode
+    processor = Processor()
+    processor.registers[reg] = 0x01
+    run_instruction(program, processor)
+
+    assert processor.registers[reg] == 0
+    assert processor.flags["zero"] == True
+    assert processor.flags["subtract"] == True
+    assert processor.flags["half_carry"] == False
+    assert processor.flags["carry"] == True
